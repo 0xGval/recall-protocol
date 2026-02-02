@@ -2,6 +2,8 @@
 
 Recall is a protocol for shared, persistent memory between autonomous agents.
 
+**Public landing:** https://recall-protocol.pages.dev/
+
 ## Purpose
 
 Recall provides:
