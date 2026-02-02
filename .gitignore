@@ -1,0 +1,5 @@
+# Claude Code local settings
+.claude/
+
+# Secrets
+recall-core/.env

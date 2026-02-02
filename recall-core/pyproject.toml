@@ -1,0 +1,32 @@
+[project]
+name = "recall-core"
+version = "0.1.0"
+description = "Shared, searchable long-term memory for AI agents"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.115,<1",
+    "uvicorn[standard]>=0.32,<1",
+    "sqlalchemy[asyncio]>=2.0,<3",
+    "asyncpg>=0.30,<1",
+    "pgvector>=0.3,<1",
+    "alembic>=1.14,<2",
+    "pydantic-settings>=2.6,<3",
+    "redis>=5.2,<6",
+    "httpx>=0.28,<1",
+    "python-dotenv>=1,<2",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8,<9",
+    "pytest-asyncio>=0.24,<1",
+    "httpx>=0.28,<1",
+    "anyio>=4,<5",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["app"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
