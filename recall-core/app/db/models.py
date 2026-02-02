@@ -88,6 +88,16 @@ class MemoryLink(Base):
     )
 
 
+class SystemConfig(Base):
+    __tablename__ = "system_config"
+
+    key: Mapped[str] = mapped_column(Text, primary_key=True)
+    value: Mapped[str] = mapped_column(Text, nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=text("now()")
+    )
+
+
 class RetrievalEvent(Base):
     __tablename__ = "retrieval_events"
 

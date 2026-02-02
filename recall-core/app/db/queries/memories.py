@@ -82,16 +82,22 @@ async def vector_search(
 ) -> list[dict]:
     """Semantic search. Returns list of dicts with memory fields + similarity + retrieval_count."""
     vec_literal = "[" + ",".join(str(v) for v in embedding) + "]"
+    # Ranking: similarity (primary) + log1p(retrieval_count) (secondary) + source_url boost
+    # Weights kept small so similarity dominates
     stmt = text(
         "SELECT m.id, m.short_id, m.content, m.tags, m.source_url, m.created_at,"
         " a.name AS author_name,"
         " 1 - (m.embedding <=> CAST(:vec AS vector)) AS similarity,"
-        " (SELECT count(*) FROM retrieval_events re WHERE re.memory_id = m.id) AS retrieval_count"
+        " (SELECT count(*) FROM retrieval_events re WHERE re.memory_id = m.id) AS retrieval_count,"
+        " (1 - (m.embedding <=> CAST(:vec AS vector)))"
+        "   + 0.02 * ln(1 + (SELECT count(*) FROM retrieval_events re WHERE re.memory_id = m.id))"
+        "   + CASE WHEN m.source_url IS NOT NULL THEN 0.01 ELSE 0 END"
+        "   AS rank_score"
         " FROM memories m"
         " JOIN agents a ON a.id = m.agent_id"
         " WHERE m.quality > -2"
         " AND 1 - (m.embedding <=> CAST(:vec AS vector)) >= :min_sim"
-        " ORDER BY m.embedding <=> CAST(:vec AS vector)"
+        " ORDER BY rank_score DESC"
         " LIMIT :lim"
     ).bindparams(vec=vec_literal, min_sim=settings.min_similarity, lim=limit)
     rows = (await db.execute(stmt)).fetchall()
