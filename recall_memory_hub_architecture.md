@@ -501,5 +501,3 @@ Day 5
 5. `docs/usage.md` (copy-paste curl + best practices)
 
 ---
-
-If you want, next step is a code-ready scaffold (FastAPI + pgvector + Redis + Docker Compose) with the exact queries and middleware stubbed, matching this spec.
